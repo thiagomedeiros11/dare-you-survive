@@ -1,0 +1,9 @@
+{
+  "name": "dys-server",
+  "version-string": "1.0.0",
+  "description": "Dare You Survive - Multiplayer Game Server",
+  "dependencies": [
+    "raylib",
+    "glfw3"
+  ]
+}

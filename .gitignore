@@ -1,0 +1,49 @@
+# --- Build directories ---
+/build/
+/cmake-build-*/
+out/
+bin/
+obj/
+
+# --- IDEs ---
+# CLion (JetBrains)
+.idea/
+
+# VSCode
+.vscode/
+
+# --- CMake ---
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+CTestTestfile.cmake
+Makefile
+
+# Ninja
+.ninja_deps
+.ninja_log
+
+# --- Compiler outputs ---
+*.o
+*.obj
+*.a
+*.lib
+*.so
+*.dll
+*.dylib
+*.exe
+
+# --- Debug / Logs ---
+*.log
+*.tmp
+*.swp
+*.swo
+
+# --- Raylib generated files (if any) ---
+*.png.backup
+
+# --- MacOS ---
+.DS_Store
+
+#
+
