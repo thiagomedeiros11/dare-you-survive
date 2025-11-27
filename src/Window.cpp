@@ -55,7 +55,7 @@ void Window::startWindow() {
         float titleX = (currentScreenWidth - titleSize.x) / 2;
         DrawTextEx(vt323, title, {titleX, 10}, 32, 1, WHITE);
 
-        std::string playerPos = "Pos: " +
+        std::string playerPos = "Position: " +
                                std::to_string((int)player.position.x) + ", " +
                                std::to_string((int)player.position.y);
         DrawTextEx(vt323, playerPos.c_str(), {10, 50}, 24, 1, WHITE);
@@ -65,8 +65,6 @@ void Window::startWindow() {
         if (leftPressed) inputDebug += "LEFT ";
         if (downPressed) inputDebug += "DOWN ";
         if (upPressed) inputDebug += "UP ";
-        inputDebug += "| Dir: " + std::to_string(player.currentDirection);
-        DrawTextEx(vt323, inputDebug.c_str(), {10, 80}, 20, 1, GREEN);
 
         EndDrawing();
     }

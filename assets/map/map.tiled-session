@@ -1,0 +1,63 @@
+{
+    "Map/SizeTest": {
+        "height": 4300,
+        "width": 2
+    },
+    "activeFile": "map.tmx",
+    "expandedProjectPaths": [
+        "."
+    ],
+    "fileStates": {
+        "16x16 castle_0.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "cobbleset-64.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "desert.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "grassland_tiles.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "map.tmx": {
+            "scale": 2.624375,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 72.58871159799952,
+                "y": 141.36699214098593
+            }
+        },
+        "murao.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "wood_tileset.tsx": {
+            "scaleInDock": 0.75,
+            "scaleInEditor": 1
+        }
+    },
+    "last.imagePath": "/home/dell/Documents/Projetos/dys-server/assets/map",
+    "map.height": 10,
+    "map.lastUsedFormat": "tmx",
+    "map.width": 10,
+    "openFiles": [
+        "map.tmx",
+        "wood_tileset.tsx"
+    ],
+    "project": "",
+    "recentFiles": [
+        "wood_tileset.tsx",
+        "map.tmx",
+        "murao.tsx",
+        "grassland_tiles.tsx",
+        "cobbleset-64.tsx",
+        "16x16 castle_0.tsx",
+        "desert.tsx"
+    ],
+    "tileset.lastUsedFormat": "tsx"
+}

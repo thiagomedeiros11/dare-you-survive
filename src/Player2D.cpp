@@ -13,9 +13,6 @@ void Player2D::LoadTextures() {
         (float)spriteWidth,
         (float)spriteHeight
     };
-    std::cout << "Spritesheet carregada (esperado 3x4 frames): spriteWidth=" << spriteWidth
-              << " spriteHeight=" << spriteHeight << " framesCount=" << framesCount
-              << " directionsCount=" << directionsCount << std::endl;
 }
 
 void Player2D::UnloadTextures() {
@@ -77,13 +74,8 @@ void Player2D::Draw() {
     );
 
     const char* dirNames[] = {"BAIXO", "ESQUERDA", "DIREITA", "CIMA"};
-    DrawText(dirNames[currentDirection], (int)position.x - 10, (int)position.y - 40, 15, YELLOW);
+    DrawText(dirNames[currentDirection], (int)position.x + 20, (int)position.y - 20, 20, YELLOW);
 
-    std::string frameInfo = "F:" + std::to_string(currentFrame);
-    DrawText(frameInfo.c_str(), (int)position.x - 10, (int)position.y - 25, 15, GREEN);
-
-    std::string rectInfo = "XY:" + std::to_string((int)frameRec.x) + "," + std::to_string((int)frameRec.y);
-    DrawText(rectInfo.c_str(), (int)position.x - 10, (int)position.y - 10, 15, ORANGE);
 }
 
 void Player2D::Move(Vector2 direction) {
@@ -116,7 +108,5 @@ void Player2D::Move(Vector2 direction) {
         currentDirection = newDirection;
         currentFrame = 0;
         framesCounter = 0;
-        std::cout << "Move debug: dir=(" << direction.x << "," << direction.y << ") -> currentDirection=" << currentDirection
-                  << " frameRec=(" << (int)frameRec.x << "," << (int)frameRec.y << ")\n";
     }
 }
