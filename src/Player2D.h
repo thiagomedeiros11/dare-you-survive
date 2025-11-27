@@ -8,6 +8,8 @@ public:
     float speed = 3.0f;
 
     Texture2D spriteSheet;
+    Texture2D grass;
+
     Rectangle frameRec;
     int currentFrame = 0;
     int framesCounter = 0;

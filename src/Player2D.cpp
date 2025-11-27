@@ -5,6 +5,8 @@
 
 void Player2D::LoadTextures() {
     spriteSheet = LoadTexture("../assets/textures/character_spritesheet.png");
+    grass = LoadTexture("../assets/textures/grass.png");
+
     frameRec = {
         0.0f,
         0.0f,
@@ -18,6 +20,7 @@ void Player2D::LoadTextures() {
 
 void Player2D::UnloadTextures() {
     UnloadTexture(spriteSheet);
+    UnloadTexture(grass);
 }
 
 void Player2D::Update() {
@@ -48,7 +51,30 @@ void Player2D::Update() {
 }
 
 void Player2D::Draw() {
-    DrawTextureRec(spriteSheet, frameRec, position, WHITE);
+    for (int y = 0; y < GetScreenHeight(); y += grass.height) {
+        for (int x = 0; x < GetScreenWidth(); x += grass.width) {
+            DrawTexture(grass, x, y, WHITE);
+        }
+    }
+    float scale = 3.0f;
+
+    Rectangle dest = {
+        position.x,
+        position.y,
+        frameRec.width * scale,
+        frameRec.height * scale
+    };
+
+    Vector2 origin = {0, 0};
+
+    DrawTexturePro(
+        spriteSheet,
+        frameRec,
+        dest,
+        origin,
+        0.0f,
+        WHITE
+    );
 
     const char* dirNames[] = {"BAIXO", "ESQUERDA", "DIREITA", "CIMA"};
     DrawText(dirNames[currentDirection], (int)position.x - 10, (int)position.y - 40, 15, YELLOW);
