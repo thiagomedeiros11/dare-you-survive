@@ -20,7 +20,6 @@ void Window::startWindow() {
 
     SetTargetFPS(60);
 
-    // Corrigindo a inicialização da câmera
     Camera2D camera = {0};
     camera.target = player.position;
     camera.offset = { screenWidth/2.0f, screenHeight/2.0f };
@@ -59,7 +58,6 @@ void Window::startWindow() {
 
         player.Update();
 
-        // Atualiza a câmera para seguir o jogador (sem suavização por enquanto)
         camera.target = player.position;
 
         BeginDrawing();
@@ -67,18 +65,12 @@ void Window::startWindow() {
 
         BeginMode2D(camera);
 
-        // Desenha o mapa primeiro (no fundo)
         mapRenderer.Draw();
 
-        // Desenha o jogador por cima
         player.Draw();
-
-        // DEBUG: Desenha uma marcação no centro do mundo
-        // DrawCircle(0, 0, 10, RED);
 
         EndMode2D();
 
-        // UI (não é afetada pela câmera)
         std::string fps = "FPS: " + std::to_string(GetFPS());
         DrawTextEx(vt323, fps.c_str(), {10, 10}, 32, 1, WHITE);
 
@@ -91,11 +83,6 @@ void Window::startWindow() {
                                std::to_string((int)player.position.x) + ", " +
                                std::to_string((int)player.position.y);
         DrawTextEx(vt323, playerPos.c_str(), {10, 50}, 24, 1, WHITE);
-
-        std::string cameraPos = "Camera: " +
-                               std::to_string((int)camera.target.x) + ", " +
-                               std::to_string((int)camera.target.y);
-        DrawTextEx(vt323, cameraPos.c_str(), {10, 80}, 24, 1, WHITE);
 
         EndDrawing();
     }

@@ -4,9 +4,7 @@
 #include <raylib.h>
 
 void Player2D::LoadTextures() {
-    spriteSheet = LoadTexture("../assets/textures/character_spritesheet.png");
-    // grass = LoadTexture("../assets/textures/grass.png");
-
+    characterSprite = LoadTexture("../assets/textures/character_spritesheet.png");
     frameRec = {
         0.0f,
         0.0f,
@@ -16,8 +14,7 @@ void Player2D::LoadTextures() {
 }
 
 void Player2D::UnloadTextures() {
-    UnloadTexture(spriteSheet);
-    UnloadTexture(grass);
+    UnloadTexture(characterSprite);
 }
 
 void Player2D::Update() {
@@ -44,14 +41,6 @@ void Player2D::Update() {
 }
 
 void Player2D::Draw() {
-    // REMOVA ou COMENTE este loop que tenta desenhar grama não carregada:
-    /*
-    for (int y = 0; y < GetScreenHeight(); y += grass.height) {
-        for (int x = 0; x < GetScreenWidth(); x += grass.width) {
-            DrawTexture(grass, x, y, WHITE);
-        }
-    }
-    */
 
     float scale = 3.0f;
 
@@ -65,7 +54,7 @@ void Player2D::Draw() {
     Vector2 origin = {0, 0};
 
     DrawTexturePro(
-        spriteSheet,
+        characterSprite,
         frameRec,
         dest,
         origin,
@@ -73,7 +62,6 @@ void Player2D::Draw() {
         WHITE
     );
 
-    // DEBUG: Direção (opcional)
     const char* dirNames[] = {"BAIXO", "ESQUERDA", "DIREITA", "CIMA"};
     DrawText(dirNames[currentDirection], (int)position.x + 20, (int)position.y - 20, 20, YELLOW);
 }

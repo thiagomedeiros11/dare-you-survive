@@ -7,8 +7,7 @@ public:
     Vector2 velocity = {0.0f, 0.0f};
     float speed = 3.0f;
 
-    Texture2D spriteSheet;
-    Texture2D grass;
+    Texture2D characterSprite;
 
     Rectangle frameRec;
     int currentFrame = 0;
