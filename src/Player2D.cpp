@@ -5,7 +5,7 @@
 
 void Player2D::LoadTextures() {
     spriteSheet = LoadTexture("../assets/textures/character_spritesheet.png");
-    grass = LoadTexture("../assets/textures/grass.png");
+    // grass = LoadTexture("../assets/textures/grass.png");
 
     frameRec = {
         0.0f,
@@ -41,18 +41,18 @@ void Player2D::Update() {
     position.x += velocity.x;
     position.y += velocity.y;
 
-    if (position.x < 0) position.x = 0;
-    if (position.x > GetScreenWidth() - spriteWidth) position.x = GetScreenWidth() - spriteWidth;
-    if (position.y < 0) position.y = 0;
-    if (position.y > GetScreenHeight() - spriteHeight) position.y = GetScreenHeight() - spriteHeight;
 }
 
 void Player2D::Draw() {
+    // REMOVA ou COMENTE este loop que tenta desenhar grama não carregada:
+    /*
     for (int y = 0; y < GetScreenHeight(); y += grass.height) {
         for (int x = 0; x < GetScreenWidth(); x += grass.width) {
             DrawTexture(grass, x, y, WHITE);
         }
     }
+    */
+
     float scale = 3.0f;
 
     Rectangle dest = {
@@ -73,9 +73,9 @@ void Player2D::Draw() {
         WHITE
     );
 
+    // DEBUG: Direção (opcional)
     const char* dirNames[] = {"BAIXO", "ESQUERDA", "DIREITA", "CIMA"};
     DrawText(dirNames[currentDirection], (int)position.x + 20, (int)position.y - 20, 20, YELLOW);
-
 }
 
 void Player2D::Move(Vector2 direction) {

@@ -4,6 +4,9 @@
   "description": "Dare You Survive - Multiplayer Game Server",
   "dependencies": [
     "raylib",
-    "glfw3"
+    "glfw3",
+    "tmxlite",
+    "zlib",
+    "zstd"
   ]
 }

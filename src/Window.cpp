@@ -1,15 +1,31 @@
 #include <iostream>
 #include "Window.h"
 #include "Player2D.h"
+#include "MapRenderer.h"
 
 void Window::startWindow() {
     SetConfigFlags(FLAG_WINDOW_RESIZABLE);
     InitWindow(screenWidth, screenHeight, "Dare You Survive - 2D");
 
     Font vt323 = LoadFont("../assets/fonts/VT323-Regular.ttf");
+
     Player2D player;
+    player.position = {100, 100};
     player.LoadTextures();
+
+    MapRenderer mapRenderer;
+    if (!mapRenderer.LoadMap("../assets/map/map.tmx")) {
+        std::cout << "Failed to load map!" << std::endl;
+    }
+
     SetTargetFPS(60);
+
+    // Corrigindo a inicialização da câmera
+    Camera2D camera = {0};
+    camera.target = player.position;
+    camera.offset = { screenWidth/2.0f, screenHeight/2.0f };
+    camera.rotation = 0.0f;
+    camera.zoom = 1.0f;
 
     while (!WindowShouldClose()) {
         int currentScreenWidth = GetScreenWidth();
@@ -43,10 +59,26 @@ void Window::startWindow() {
 
         player.Update();
 
+        // Atualiza a câmera para seguir o jogador (sem suavização por enquanto)
+        camera.target = player.position;
+
         BeginDrawing();
         ClearBackground(BLACK);
+
+        BeginMode2D(camera);
+
+        // Desenha o mapa primeiro (no fundo)
+        mapRenderer.Draw();
+
+        // Desenha o jogador por cima
         player.Draw();
 
+        // DEBUG: Desenha uma marcação no centro do mundo
+        // DrawCircle(0, 0, 10, RED);
+
+        EndMode2D();
+
+        // UI (não é afetada pela câmera)
         std::string fps = "FPS: " + std::to_string(GetFPS());
         DrawTextEx(vt323, fps.c_str(), {10, 10}, 32, 1, WHITE);
 
@@ -60,15 +92,15 @@ void Window::startWindow() {
                                std::to_string((int)player.position.y);
         DrawTextEx(vt323, playerPos.c_str(), {10, 50}, 24, 1, WHITE);
 
-        std::string inputDebug = "Input: ";
-        if (rightPressed) inputDebug += "RIGHT ";
-        if (leftPressed) inputDebug += "LEFT ";
-        if (downPressed) inputDebug += "DOWN ";
-        if (upPressed) inputDebug += "UP ";
+        std::string cameraPos = "Camera: " +
+                               std::to_string((int)camera.target.x) + ", " +
+                               std::to_string((int)camera.target.y);
+        DrawTextEx(vt323, cameraPos.c_str(), {10, 80}, 24, 1, WHITE);
 
         EndDrawing();
     }
 
     player.UnloadTextures();
+    mapRenderer.Unload();
     CloseWindow();
 }
