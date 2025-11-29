@@ -1,7 +1,11 @@
 #include "Player2D.h"
+
+#include "MapRenderer.h"
+
+#include <raylib.h>
+
 #include <cmath>
 #include <iostream>
-#include <raylib.h>
 
 void Player2D::LoadTextures() {
     characterSprite = LoadTexture("../assets/textures/character_spritesheet.png");
@@ -97,4 +101,33 @@ void Player2D::Move(Vector2 direction) {
         currentFrame = 0;
         framesCounter = 0;
     }
+}
+
+bool Player2D::CheckCollision(const MapRenderer& map) const {
+    Rectangle hitbox = GetHitbox();
+    Rectangle mapBounds = map.GetMapBounds();
+
+    if (hitbox.x < mapBounds.x || hitbox.y < mapBounds.y ||
+        hitbox.x + hitbox.width > mapBounds.x + mapBounds.width ||
+        hitbox.y + hitbox.height > mapBounds.y + mapBounds.height) {
+        return true;
+        }
+
+    // 2. Verifica tiles sólidos
+    const tmx::Vector2u tileSize = {32, 32};
+
+    int leftTile = static_cast<int>(hitbox.x / tileSize.x);
+    int rightTile = static_cast<int>((hitbox.x + hitbox.width) / tileSize.x);
+    int topTile = static_cast<int>(hitbox.y / tileSize.y);
+    int bottomTile = static_cast<int>((hitbox.y + hitbox.height) / tileSize.y);
+
+    for (int y = topTile; y <= bottomTile; ++y) {
+        for (int x = leftTile; x <= rightTile; ++x) {
+            if (map.IsTileSolid(x, y)) {
+                return true;
+            }
+        }
+    }
+
+    return false;
 }

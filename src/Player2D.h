@@ -22,9 +22,21 @@ public:
     bool isMoving = false;
     int currentDirection = 0;
 
+    Rectangle GetHitbox() const {
+        float scale = 3.0f;
+        return {
+        position.x + 8 * scale,
+        position.y + 16 * scale,
+        (spriteWidth - 16) * scale,
+        (spriteHeight - 8) * scale
+        };
+    }
+
     void LoadTextures();
     void UnloadTextures();
     void Update();
     void Draw();
     void Move(Vector2 direction);
+
+    bool CheckCollision(const class MapRenderer& map) const;
 };

@@ -5,18 +5,39 @@
 bool MapRenderer::LoadMap(const std::string& path) {
     if (map.load(path)) {
         const auto& layers = map.getLayers();
+        tileSize = map.getTileSize();
+        mapSize = map.getTileCount();
 
-        for (const auto& layer : layers) {
-            if (layer->getType() == tmx::Layer::Type::Tile) {
-                const auto& tileLayer = layer->getLayerAs<tmx::TileLayer>();
-                const auto& tiles = tileLayer.getTiles();
-            }
-        }
+        BuildCollisionMap();
+
         LoadTileset();
         return true;
     }
     std::cout << "Failed to load map: " << path << std::endl;
     return false;
+}
+void MapRenderer::BuildCollisionMap() {
+    collisionMap.resize(mapSize.y, std::vector<bool>(mapSize.x, false));
+
+    const auto& layers = map.getLayers();
+    for (const auto& layer : layers) {
+        if (layer->getType() == tmx::Layer::Type::Tile) {
+            const auto& tileLayer = layer->getLayerAs<tmx::TileLayer>();
+            const auto& tiles = tileLayer.getTiles();
+
+            if (layer->getName().find("collision") != std::string::npos) {
+                for (std::size_t y = 0; y < mapSize.y; ++y) {
+                    for (std::size_t x = 0; x < mapSize.x; ++x) {
+                        std::size_t index = y * mapSize.x + x;
+                        if (index < tiles.size()) {
+                            const auto& tile = tiles[index];
+                            collisionMap[y][x] = (tile.ID != 0);
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
 
 void MapRenderer::LoadTileset() {
@@ -77,6 +98,24 @@ void MapRenderer::Draw() {
             DrawTileLayer(tileLayer);
         }
     }
+}
+
+Vector2 MapRenderer::GetMapSize() const {
+    return {
+    static_cast<float>(mapSize.x * tileSize.x),
+        static_cast<float>(mapSize.y * tileSize.y)
+    };
+}
+
+bool MapRenderer::IsTileSolid(int x, int y) const {
+    if (x < 0 || y < 0 || x >= static_cast<int>(mapSize.x) || y >= static_cast<int>(mapSize.y)) {
+        return true;
+    }
+    return collisionMap[y][x];
+}
+
+Rectangle MapRenderer::GetMapBounds() const {
+    return {0, 0, GetMapSize().x, GetMapSize().y};
 }
 
 void MapRenderer::Unload() {

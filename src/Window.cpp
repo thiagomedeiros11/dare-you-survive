@@ -1,7 +1,9 @@
-#include <iostream>
 #include "Window.h"
+
 #include "Player2D.h"
 #include "MapRenderer.h"
+
+#include <iostream>
 
 void Window::startWindow() {
     SetConfigFlags(FLAG_WINDOW_RESIZABLE);
@@ -52,11 +54,17 @@ void Window::startWindow() {
             direction.y = -1;
         }
 
+        Vector2 previousPosition = player.position;
+
         if (direction.x != 0 || direction.y != 0) {
             player.Move(direction);
         }
 
         player.Update();
+
+        if (player.CheckCollision(mapRenderer)) {
+            player.position = previousPosition;
+        }
 
         camera.target = player.position;
 
