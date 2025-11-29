@@ -2,20 +2,48 @@
 #include <iostream>
 #include <raylib.h>
 
+MapRenderer::MapRenderer(const MapRenderer& other) {
+    CopyFrom(other);
+}
+
+MapRenderer& MapRenderer::operator=(const MapRenderer& other) {
+    if (this != &other) {
+        Unload(); // Limpa recursos atuais
+        CopyFrom(other);
+    }
+    return *this;
+}
+
+void MapRenderer::CopyFrom(const MapRenderer& other) {
+    filePath = other.filePath;
+    tilesetImagePath = other.tilesetImagePath;
+    tileSize = other.tileSize;
+    mapSize = other.mapSize;
+    collisionMap = other.collisionMap;
+
+    if (!filePath.empty()) {
+        map.load(filePath);
+    }
+
+    if (!tilesetImagePath.empty()) {
+        tilesetTexture = LoadTexture(tilesetImagePath.c_str());
+    }
+}
+
 bool MapRenderer::LoadMap(const std::string& path) {
+    filePath = path;
     if (map.load(path)) {
-        const auto& layers = map.getLayers();
         tileSize = map.getTileSize();
         mapSize = map.getTileCount();
 
         BuildCollisionMap();
-
         LoadTileset();
         return true;
     }
     std::cout << "Failed to load map: " << path << std::endl;
     return false;
 }
+
 void MapRenderer::BuildCollisionMap() {
     collisionMap.resize(mapSize.y, std::vector<bool>(mapSize.x, false));
 
@@ -102,7 +130,7 @@ void MapRenderer::Draw() {
 
 Vector2 MapRenderer::GetMapSize() const {
     return {
-    static_cast<float>(mapSize.x * tileSize.x),
+        static_cast<float>(mapSize.x * tileSize.x),
         static_cast<float>(mapSize.y * tileSize.y)
     };
 }
@@ -121,5 +149,6 @@ Rectangle MapRenderer::GetMapBounds() const {
 void MapRenderer::Unload() {
     if (tilesetTexture.id > 0) {
         UnloadTexture(tilesetTexture);
+        tilesetTexture.id = 0;
     }
 }

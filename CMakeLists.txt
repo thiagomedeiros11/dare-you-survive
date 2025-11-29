@@ -27,6 +27,8 @@ add_executable(c__
         src/Player2D.h
         src/MapRenderer.cpp
         src/MapRenderer.h
+        src/MapManager.cpp
+        src/MapManager.h
 )
 
 target_link_libraries(c__ PRIVATE

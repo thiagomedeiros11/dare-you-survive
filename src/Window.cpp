@@ -1,8 +1,9 @@
 #include "Window.h"
 
-#include "Player2D.h"
-#include "MapRenderer.h"
+#include <format>
 
+#include "Player2D.h"
+#include "MapManager.h"
 #include <iostream>
 
 void Window::startWindow() {
@@ -15,8 +16,8 @@ void Window::startWindow() {
     player.position = {100, 100};
     player.LoadTextures();
 
-    MapRenderer mapRenderer;
-    if (!mapRenderer.LoadMap("../assets/map/map.tmx")) {
+    MapManager mapManager;
+    if (!mapManager.LoadInitialMap("../assets/map/map.tmx")) {
         std::cout << "Failed to load map!" << std::endl;
     }
 
@@ -62,7 +63,9 @@ void Window::startWindow() {
 
         player.Update();
 
-        if (player.CheckCollision(mapRenderer)) {
+        mapManager.Update(player);
+
+        if (mapManager.CheckCollision(player)) {
             player.position = previousPosition;
         }
 
@@ -73,7 +76,7 @@ void Window::startWindow() {
 
         BeginMode2D(camera);
 
-        mapRenderer.Draw();
+        mapManager.Draw();
 
         player.Draw();
 
@@ -87,15 +90,17 @@ void Window::startWindow() {
         float titleX = (currentScreenWidth - titleSize.x) / 2;
         DrawTextEx(vt323, title, {titleX, 10}, 32, 1, WHITE);
 
-        std::string playerPos = "Position: " +
-                               std::to_string((int)player.position.x) + ", " +
-                               std::to_string((int)player.position.y);
+        std::string playerPos = "Position: X " +
+                        std::to_string((int)player.position.x) +
+                        ", Y " +
+                        std::to_string((int)player.position.y);
+
         DrawTextEx(vt323, playerPos.c_str(), {10, 50}, 24, 1, WHITE);
 
         EndDrawing();
     }
 
     player.UnloadTextures();
-    mapRenderer.Unload();
+    mapManager.Unload();
     CloseWindow();
 }

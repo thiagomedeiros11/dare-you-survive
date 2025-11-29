@@ -113,8 +113,7 @@ bool Player2D::CheckCollision(const MapRenderer& map) const {
         return true;
         }
 
-    // 2. Verifica tiles sólidos
-    const tmx::Vector2u tileSize = {32, 32};
+    tmx::Vector2u tileSize = map.GetTileSize();
 
     int leftTile = static_cast<int>(hitbox.x / tileSize.x);
     int rightTile = static_cast<int>((hitbox.x + hitbox.width) / tileSize.x);
