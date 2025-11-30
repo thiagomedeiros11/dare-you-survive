@@ -5,7 +5,10 @@ class Player2D {
 public:
     Vector2 position = {400.0f, 300.0f};
     Vector2 velocity = {0.0f, 0.0f};
+    Vector2 targetPosition = {0.0f, 0.0f};
     float speed = 3.0f;
+    float movementSpeed = 150.0f;
+    bool isMovingToTile = false;
 
     Texture2D characterSprite;
 
@@ -22,21 +25,16 @@ public:
     bool isMoving = false;
     int currentDirection = 0;
 
-    Rectangle GetHitbox() const {
-        float scale = 3.0f;
-        return {
-        position.x + 8 * scale,
-        position.y + 16 * scale,
-        (spriteWidth - 16) * scale,
-        (spriteHeight - 8) * scale
-        };
-    }
+    Rectangle GetHitbox() const;
 
     void LoadTextures();
     void UnloadTextures();
     void Update();
     void Draw();
-    void Move(Vector2 direction);
-
+    void MoveToTile(Vector2 direction);
     bool CheckCollision(const class MapRenderer& map) const;
+    Vector2 GetTilePosition() const;
+
+private:
+    bool CanMoveToTile(Vector2 direction) const;
 };

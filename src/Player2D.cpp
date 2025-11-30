@@ -1,9 +1,6 @@
 #include "Player2D.h"
-
 #include "MapRenderer.h"
-
 #include <raylib.h>
-
 #include <cmath>
 #include <iostream>
 
@@ -15,6 +12,7 @@ void Player2D::LoadTextures() {
         (float)spriteWidth,
         (float)spriteHeight
     };
+    targetPosition = position;
 }
 
 void Player2D::UnloadTextures() {
@@ -22,9 +20,32 @@ void Player2D::UnloadTextures() {
 }
 
 void Player2D::Update() {
-    bool moving = (velocity.x != 0 || velocity.y != 0);
+    if (isMovingToTile) {
+        Vector2 direction = {
+            targetPosition.x - position.x,
+            targetPosition.y - position.y
+        };
 
-    if (moving) {
+        float distance = sqrtf(direction.x * direction.x + direction.y * direction.y);
+
+        if (distance > 2.0f) {
+            direction.x /= distance;
+            direction.y /= distance;
+
+            position.x += direction.x * movementSpeed * GetFrameTime();
+            position.y += direction.y * movementSpeed * GetFrameTime();
+
+            isMoving = true;
+        } else {
+            position = targetPosition;
+            isMovingToTile = false;
+            isMoving = false;
+            currentFrame = 0;
+            framesCounter = 0;
+        }
+    }
+
+    if (isMoving) {
         framesCounter++;
         if (framesCounter >= (60 / framesSpeed)) {
             framesCounter = 0;
@@ -38,14 +59,9 @@ void Player2D::Update() {
 
     frameRec.x = (float)currentFrame * (float)spriteWidth;
     frameRec.y = (float)currentDirection * (float)spriteHeight;
-
-    position.x += velocity.x;
-    position.y += velocity.y;
-
 }
 
 void Player2D::Draw() {
-
     float scale = 3.0f;
 
     Rectangle dest = {
@@ -70,21 +86,67 @@ void Player2D::Draw() {
     DrawText(dirNames[currentDirection], (int)position.x + 20, (int)position.y - 20, 20, YELLOW);
 }
 
-void Player2D::Move(Vector2 direction) {
-    if (direction.x == 0 && direction.y == 0) {
-        velocity = {0,0};
-        isMoving = false;
+Vector2 Player2D::GetTilePosition() const {
+    float baseTileSize = 32.0f;
+    float scaledTileSize = baseTileSize * 3.0f;
+
+    return {
+        std::round(position.x / scaledTileSize),
+        std::round(position.y / scaledTileSize)
+    };
+}
+
+bool Player2D::CanMoveToTile(Vector2 direction) const {
+    Vector2 currentTile = GetTilePosition();
+    Vector2 nextTile = {
+        currentTile.x + direction.x,
+        currentTile.y + direction.y
+    };
+
+    if (nextTile.x < 0 || nextTile.y < 0 || nextTile.x >= 30 || nextTile.y >= 20) {
+        std::cout << "Cannot move - outside map bounds: (" << nextTile.x << ", " << nextTile.y << ")" << std::endl;
+        return false;
+    }
+
+    float baseTileSize = 32.0f;
+    float scaledTileSize = baseTileSize * 3.0f;
+
+    Rectangle futureHitbox = {
+        nextTile.x * scaledTileSize + 8 * 3.0f,
+        nextTile.y * scaledTileSize + 16 * 3.0f,
+        (spriteWidth - 16) * 3.0f,
+        (spriteHeight - 8) * 3.0f
+    };
+
+    Rectangle mapBounds = {0, 0, 30 * scaledTileSize, 20 * scaledTileSize};
+    if (futureHitbox.x < mapBounds.x || futureHitbox.y < mapBounds.y ||
+        futureHitbox.x + futureHitbox.width > mapBounds.x + mapBounds.width ||
+        futureHitbox.y + futureHitbox.height > mapBounds.y + mapBounds.height) {
+        return false;
+        }
+    return true;
+}
+
+Rectangle Player2D::GetHitbox() const {
+    float scale = 3.0f;
+    float baseTileSize = 32.0f;
+
+    return {
+        position.x + 8 * scale,
+        position.y + 16 * scale,
+        (spriteWidth - 16) * scale,
+        (spriteHeight - 8) * scale
+    };
+}
+
+void Player2D::MoveToTile(Vector2 direction) {
+    if (isMovingToTile) {
         return;
     }
 
-    float length = sqrtf(direction.x * direction.x + direction.y * direction.y);
-    if (length != 0.0f) {
-        direction.x /= length;
-        direction.y /= length;
+    if (!CanMoveToTile(direction)) {
+        return;
     }
-
-    velocity = { direction.x * speed, direction.y * speed };
-    isMoving = true;
 
     int newDirection = currentDirection;
 
@@ -101,6 +163,29 @@ void Player2D::Move(Vector2 direction) {
         currentFrame = 0;
         framesCounter = 0;
     }
+
+    float baseTileSize = 32.0f;
+    float scaledTileSize = baseTileSize * 3.0f;
+
+    Vector2 currentTile = GetTilePosition();
+    Vector2 nextTile = {
+        currentTile.x + direction.x,
+        currentTile.y + direction.y
+    };
+
+    targetPosition = {
+        nextTile.x * scaledTileSize,
+        nextTile.y * scaledTileSize
+    };
+
+    isMovingToTile = true;
+    isMoving = true;
+
+    // Debug
+    std::cout << "Moving from tile (" << currentTile.x << ", " << currentTile.y
+              << ") to (" << nextTile.x << ", " << nextTile.y << ")"
+              << " | Position: " << position.x << ", " << position.y
+              << " | Target: " << targetPosition.x << ", " << targetPosition.y << std::endl;
 }
 
 bool Player2D::CheckCollision(const MapRenderer& map) const {
@@ -111,7 +196,7 @@ bool Player2D::CheckCollision(const MapRenderer& map) const {
         hitbox.x + hitbox.width > mapBounds.x + mapBounds.width ||
         hitbox.y + hitbox.height > mapBounds.y + mapBounds.height) {
         return true;
-        }
+    }
 
     tmx::Vector2u tileSize = map.GetTileSize();
     float mapScale = map.GetScale();

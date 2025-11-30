@@ -1,7 +1,5 @@
 #include "Window.h"
-
 #include <format>
-
 #include "Player2D.h"
 #include "MapManager.h"
 #include <iostream>
@@ -13,7 +11,12 @@ void Window::startWindow() {
     Font vt323 = LoadFont("../assets/fonts/VT323-Regular.ttf");
 
     Player2D player;
-    player.position = {400, 400};
+    float baseTileSize = 32.0f;
+    float scaledTileSize = baseTileSize * 3.0f;
+    player.position = {
+        10 * scaledTileSize,
+        10 * scaledTileSize
+    };
     player.LoadTextures();
 
     MapManager mapManager;
@@ -29,37 +32,48 @@ void Window::startWindow() {
     camera.rotation = 0.0f;
     camera.zoom = 1.0f;
 
+    bool canInput = true;
+    float inputCooldown = 0.0f;
+
     while (!WindowShouldClose()) {
         int currentScreenWidth = GetScreenWidth();
+        float deltaTime = GetFrameTime();
+
+        if (inputCooldown > 0.0f) {
+            inputCooldown -= deltaTime;
+            canInput = false;
+        } else {
+            canInput = true;
+        }
 
         player.velocity = {0, 0};
         player.isMoving = false;
 
         Vector2 direction = {0, 0};
 
-        bool rightPressed = IsKeyDown(KEY_RIGHT) || IsKeyDown(KEY_D);
-        bool leftPressed = IsKeyDown(KEY_LEFT) || IsKeyDown(KEY_A);
+        if (canInput && !player.isMovingToTile) {
+            bool rightPressed = IsKeyPressed(KEY_RIGHT) || IsKeyPressed(KEY_D);
+            bool leftPressed = IsKeyPressed(KEY_LEFT) || IsKeyPressed(KEY_A);
+            bool downPressed = IsKeyPressed(KEY_DOWN) || IsKeyPressed(KEY_S);
+            bool upPressed = IsKeyPressed(KEY_UP) || IsKeyPressed(KEY_W);
 
-        if (rightPressed && !leftPressed) {
-            direction.x = 1;
-        } else if (leftPressed && !rightPressed) {
-            direction.x = -1;
-        }
+            if (rightPressed && !leftPressed) {
+                direction.x = 1;
+            } else if (leftPressed && !rightPressed) {
+                direction.x = -1;
+            } else if (downPressed && !upPressed) {
+                direction.y = 1;
+            } else if (upPressed && !downPressed) {
+                direction.y = -1;
+            }
 
-        bool downPressed = IsKeyDown(KEY_DOWN) || IsKeyDown(KEY_S);
-        bool upPressed = IsKeyDown(KEY_UP) || IsKeyDown(KEY_W);
-
-        if (downPressed && !upPressed) {
-            direction.y = 1;
-        } else if (upPressed && !downPressed) {
-            direction.y = -1;
+            if (direction.x != 0 || direction.y != 0) {
+                player.MoveToTile(direction);
+                inputCooldown = 0.1f;
+            }
         }
 
         Vector2 previousPosition = player.position;
-
-        if (direction.x != 0 || direction.y != 0) {
-            player.Move(direction);
-        }
 
         player.Update();
 
@@ -67,6 +81,9 @@ void Window::startWindow() {
 
         if (mapManager.CheckCollision(player)) {
             player.position = previousPosition;
+            player.targetPosition = previousPosition;
+            player.isMovingToTile = false;
+            player.isMoving = false;
         }
 
         camera.target = player.position;
@@ -77,7 +94,6 @@ void Window::startWindow() {
         BeginMode2D(camera);
 
         mapManager.Draw();
-
         player.Draw();
 
         EndMode2D();
@@ -94,8 +110,21 @@ void Window::startWindow() {
                         std::to_string((int)player.position.x) +
                         ", Y " +
                         std::to_string((int)player.position.y);
-
         DrawTextEx(vt323, playerPos.c_str(), {10, 50}, 24, 1, WHITE);
+
+        Vector2 tilePos = player.GetTilePosition();
+        std::string tileInfo = "Tile: " +
+                        std::to_string((int)tilePos.x) +
+                        ", " +
+                        std::to_string((int)tilePos.y);
+        DrawTextEx(vt323, tileInfo.c_str(), {10, 80}, 24, 1, WHITE);
+
+        // Mostra o tamanho do tile atual
+        std::string tileSizeInfo = "Tile Size: 32px * 3 = 96px";
+        DrawTextEx(vt323, tileSizeInfo.c_str(), {10, 110}, 24, 1, WHITE);
+
+        std::string movingStatus = player.isMovingToTile ? "Moving to tile" : "Ready";
+        DrawTextEx(vt323, movingStatus.c_str(), {10, 140}, 24, 1, WHITE);
 
         EndDrawing();
     }
