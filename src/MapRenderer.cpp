@@ -8,7 +8,7 @@ MapRenderer::MapRenderer(const MapRenderer& other) {
 
 MapRenderer& MapRenderer::operator=(const MapRenderer& other) {
     if (this != &other) {
-        Unload(); // Limpa recursos atuais
+        Unload();
         CopyFrom(other);
     }
     return *this;
@@ -20,6 +20,7 @@ void MapRenderer::CopyFrom(const MapRenderer& other) {
     tileSize = other.tileSize;
     mapSize = other.mapSize;
     collisionMap = other.collisionMap;
+    scale = other.scale;
 
     if (!filePath.empty()) {
         map.load(filePath);
@@ -35,6 +36,7 @@ bool MapRenderer::LoadMap(const std::string& path) {
     if (map.load(path)) {
         tileSize = map.getTileSize();
         mapSize = map.getTileCount();
+        scale = 3.0f;
 
         BuildCollisionMap();
         LoadTileset();
@@ -92,8 +94,8 @@ void MapRenderer::DrawTileLayer(const tmx::TileLayer& layer) {
                 const auto& tile = tiles[index];
 
                 if (tile.ID != 0) {
-                    float posX = static_cast<float>(x * tileSize.x);
-                    float posY = static_cast<float>(y * tileSize.y);
+                    float posX = static_cast<float>(x * tileSize.x * scale);
+                    float posY = static_cast<float>(y * tileSize.y * scale);
 
                     std::size_t tileID = tile.ID - 1;
 
@@ -108,9 +110,15 @@ void MapRenderer::DrawTileLayer(const tmx::TileLayer& layer) {
                             static_cast<float>(tileSize.x),
                             static_cast<float>(tileSize.y)
                         };
-                        DrawTextureRec(tilesetTexture, sourceRect, {posX, posY}, WHITE);
-                    } else {
-                        std::cout << "Invalid tileID: " << tileID << " from original ID: " << tile.ID << std::endl;
+
+                        Rectangle destRect = {
+                            posX,
+                            posY,
+                            static_cast<float>(tileSize.x) * scale,
+                            static_cast<float>(tileSize.y) * scale
+                        };
+
+                        DrawTexturePro(tilesetTexture, sourceRect, destRect, {0, 0}, 0.0f, WHITE);
                     }
                 }
             }
@@ -130,8 +138,8 @@ void MapRenderer::Draw() {
 
 Vector2 MapRenderer::GetMapSize() const {
     return {
-        static_cast<float>(mapSize.x * tileSize.x),
-        static_cast<float>(mapSize.y * tileSize.y)
+        static_cast<float>(mapSize.x * tileSize.x * scale),
+        static_cast<float>(mapSize.y * tileSize.y * scale)
     };
 }
 

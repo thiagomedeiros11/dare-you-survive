@@ -8,12 +8,12 @@
 
 void Window::startWindow() {
     SetConfigFlags(FLAG_WINDOW_RESIZABLE);
-    InitWindow(screenWidth, screenHeight, "Dare You Survive - 2D");
+    InitWindow(screenWidth, screenHeight, "Dare You Survive - 2D Prototype");
 
     Font vt323 = LoadFont("../assets/fonts/VT323-Regular.ttf");
 
     Player2D player;
-    player.position = {100, 100};
+    player.position = {400, 400};
     player.LoadTextures();
 
     MapManager mapManager;

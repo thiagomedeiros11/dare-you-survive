@@ -22,6 +22,8 @@ public:
     Rectangle GetMapBounds() const;
     tmx::Vector2u GetTileSize() const { return tileSize; }
     std::string GetFilePath() const { return filePath; }
+    float GetScale() const { return scale; }
+    void SetScale(float newScale) { scale = newScale;};
 
 
 private:
@@ -33,6 +35,7 @@ private:
     std::vector<std::vector<bool>> collisionMap;
     tmx::Vector2u tileSize;
     tmx::Vector2u mapSize;
+    float scale = 3.0f;
 
     void LoadTileset();
     void DrawTileLayer(const tmx::TileLayer& layer);

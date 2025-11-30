@@ -114,11 +114,12 @@ bool Player2D::CheckCollision(const MapRenderer& map) const {
         }
 
     tmx::Vector2u tileSize = map.GetTileSize();
+    float mapScale = map.GetScale();
 
-    int leftTile = static_cast<int>(hitbox.x / tileSize.x);
-    int rightTile = static_cast<int>((hitbox.x + hitbox.width) / tileSize.x);
-    int topTile = static_cast<int>(hitbox.y / tileSize.y);
-    int bottomTile = static_cast<int>((hitbox.y + hitbox.height) / tileSize.y);
+    int leftTile = static_cast<int>(hitbox.x / (tileSize.x * mapScale));
+    int rightTile = static_cast<int>((hitbox.x + hitbox.width) / (tileSize.x * mapScale));
+    int topTile = static_cast<int>(hitbox.y / (tileSize.y * mapScale));
+    int bottomTile = static_cast<int>((hitbox.y + hitbox.height) / (tileSize.y * mapScale));
 
     for (int y = topTile; y <= bottomTile; ++y) {
         for (int x = leftTile; x <= rightTile; ++x) {
