@@ -50,16 +50,15 @@ void MapManager::SetupTransitions() {
     if (currentMap->GetFilePath().find("map.tmx") != std::string::npos) {
         transitions.push_back({
             {mapSize.x - 50 * scale, 0, 50 * scale, mapSize.y}, // Área de trigger
-            "../assets/map/map2.tmx",           // Próximo mapa
-            {771 * scale, 228 * scale}                 // Posição de spawn no map1
+            "../assets/map/map2.tmx",                                                    // Próximo mapa
+            {771 * scale, 228 * scale}                                           // Posição de spawn no map1
         });
     }
     else if (currentMap->GetFilePath().find("map2.tmx") != std::string::npos) {
-        // quando player chegar na borda esquerda, volta para map1
         transitions.push_back({
-            {0, 0, 50 * scale, mapSize.y},              // Área de trigger
-            "../assets/map/map.tmx",            // Mapa anterior
-            {100 * scale, 250 * scale}    // Posição de spawn no map2
+            {0, 0, 50 * scale, mapSize.y},                     // Área de trigger
+            "../assets/map/map.tmx",                                                    // Mapa anterior
+            {100 * scale, 250 * scale}                                          // Posição de spawn no map2
         });
     }
 }

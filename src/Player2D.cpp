@@ -71,7 +71,10 @@ void Player2D::Draw() {
         frameRec.height * scale
     };
 
-    Vector2 origin = {0, 0};
+    Vector2 origin = {
+        frameRec.width * scale / 2.0f,
+        (frameRec.height * scale) - (16 * scale)
+    };
 
     DrawTexturePro(
         characterSprite,
@@ -81,9 +84,6 @@ void Player2D::Draw() {
         0.0f,
         WHITE
     );
-
-    const char* dirNames[] = {"BAIXO", "ESQUERDA", "DIREITA", "CIMA"};
-    DrawText(dirNames[currentDirection], (int)position.x + 20, (int)position.y - 20, 20, YELLOW);
 }
 
 Vector2 Player2D::GetTilePosition() const {
@@ -173,9 +173,20 @@ void Player2D::MoveToTile(Vector2 direction) {
         currentTile.y + direction.y
     };
 
+    float scale = 3.0f;
+
+
+    float tileSize = 32.0f * 3.0f;
+
+    float tileCenterX = nextTile.x * tileSize + tileSize / 2.0f;
+    float tileCenterY = nextTile.y * tileSize + tileSize / 2.0f;
+
+    float footOffsetX = spriteWidth * scale / 2.0f;
+    float footOffsetY = (spriteHeight * scale) - (16 * scale);
+
     targetPosition = {
-        nextTile.x * scaledTileSize,
-        nextTile.y * scaledTileSize
+        tileCenterX - footOffsetX,
+        tileCenterY - footOffsetY
     };
 
     isMovingToTile = true;
@@ -213,6 +224,5 @@ bool Player2D::CheckCollision(const MapRenderer& map) const {
             }
         }
     }
-
     return false;
 }

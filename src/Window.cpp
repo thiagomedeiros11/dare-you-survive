@@ -52,10 +52,10 @@ void Window::startWindow() {
         Vector2 direction = {0, 0};
 
         if (canInput && !player.isMovingToTile) {
-            bool rightPressed = IsKeyPressed(KEY_RIGHT) || IsKeyPressed(KEY_D);
-            bool leftPressed = IsKeyPressed(KEY_LEFT) || IsKeyPressed(KEY_A);
-            bool downPressed = IsKeyPressed(KEY_DOWN) || IsKeyPressed(KEY_S);
-            bool upPressed = IsKeyPressed(KEY_UP) || IsKeyPressed(KEY_W);
+            bool rightPressed = IsKeyDown(KEY_RIGHT) || IsKeyDown(KEY_D);
+            bool leftPressed = IsKeyDown(KEY_LEFT) || IsKeyDown(KEY_A);
+            bool downPressed = IsKeyDown(KEY_DOWN) || IsKeyDown(KEY_S);
+            bool upPressed = IsKeyDown(KEY_UP) || IsKeyDown(KEY_W);
 
             if (rightPressed && !leftPressed) {
                 direction.x = 1;
@@ -118,13 +118,6 @@ void Window::startWindow() {
                         ", " +
                         std::to_string((int)tilePos.y);
         DrawTextEx(vt323, tileInfo.c_str(), {10, 80}, 24, 1, WHITE);
-
-        // Mostra o tamanho do tile atual
-        std::string tileSizeInfo = "Tile Size: 32px * 3 = 96px";
-        DrawTextEx(vt323, tileSizeInfo.c_str(), {10, 110}, 24, 1, WHITE);
-
-        std::string movingStatus = player.isMovingToTile ? "Moving to tile" : "Ready";
-        DrawTextEx(vt323, movingStatus.c_str(), {10, 140}, 24, 1, WHITE);
 
         EndDrawing();
     }
